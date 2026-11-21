@@ -1,0 +1,465 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Wye.App.ViewModels"
+        xmlns:data="using:Wye.Data"
+        xmlns:models="using:Wye.Core.Models"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
+        x:Class="Wye.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:Name="Root"
+        Icon="/Assets/wye-app-icon.png"
+        Title="{Binding WindowTitle}" Width="1280" Height="800" MinWidth="960" MinHeight="600">
+
+  <Window.KeyBindings>
+    <KeyBinding Gesture="F5" Command="{Binding RefreshCommand}" />
+  </Window.KeyBindings>
+
+  <Window.Styles>
+    <!-- Linhas do diff: fundo pela cor do tipo, + e − sempre visíveis na margem -->
+    <Style Selector="Border.line">
+      <Setter Property="BorderThickness" Value="3,0,0,0" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.line.add">
+      <Setter Property="Background" Value="{DynamicResource DiffAddedBg}" />
+    </Style>
+    <Style Selector="Border.line.delete">
+      <Setter Property="Background" Value="{DynamicResource DiffRemovedBg}" />
+    </Style>
+    <Style Selector="Border.line.hunk">
+      <Setter Property="Background" Value="{DynamicResource SurfaceSunken}" />
+    </Style>
+    <Style Selector="Border.line.hunk TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+    </Style>
+    <Style Selector="Border.line.add TextBlock.gutter">
+      <Setter Property="Foreground" Value="{DynamicResource DiffAddedText}" />
+    </Style>
+    <Style Selector="Border.line.delete TextBlock.gutter">
+      <Setter Property="Foreground" Value="{DynamicResource DiffRemovedText}" />
+    </Style>
+    <Style Selector="Border.line.change">
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <!-- Linha escolhida para o stage parcial: barra verde na margem, como o branch do logo -->
+    <Style Selector="ListBoxItem:selected Border.line.change">
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+    </Style>
+    <Style Selector="ListBoxItem:selected Border.line.add">
+      <Setter Property="Background" Value="{DynamicResource DiffAddedSelectedBg}" />
+    </Style>
+    <Style Selector="ListBoxItem:selected Border.line.delete">
+      <Setter Property="Background" Value="{DynamicResource DiffRemovedSelectedBg}" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover Border.line.change">
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderControl}" />
+    </Style>
+    <Style Selector="ListBoxItem:selected:pointerover Border.line.change">
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+    </Style>
+
+    <Style Selector="Border.pane-header">
+      <Setter Property="Height" Value="44" />
+      <Setter Property="Padding" Value="16,0" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+    </Style>
+    <Style Selector="Border.chip">
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="6,0" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.count">
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="6,0" />
+      <Setter Property="MinWidth" Value="20" />
+      <Setter Property="Background" Value="{DynamicResource SurfaceHover}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel>
+    <!-- ============================================================ barra de ferramentas -->
+    <Border DockPanel.Dock="Top" Height="56" Background="{DynamicResource SurfaceSunken}"
+            BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,0,0,1">
+      <DockPanel>
+        <!-- Símbolo: na barra de título o nome já aparece, então só o Y -->
+        <Border DockPanel.Dock="Left" Width="56" BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,0,1,0">
+          <Viewbox Width="22" Height="22" ToolTip.Tip="wye">
+            <Canvas Width="256" Height="256">
+              <Path Data="{StaticResource WyeSmallMainGeometry}" Fill="{DynamicResource LogoMain}" />
+              <Path Data="{StaticResource WyeSmallBranchGeometry}" Fill="{DynamicResource LogoBranch}" />
+            </Canvas>
+          </Viewbox>
+        </Border>
+
+        <!-- Repositório -->
+        <Button DockPanel.Dock="Left" Classes="cell" Width="248" x:Name="RepositoryCell"
+                ToolTip.Tip="{Binding SelectedRepository.Path, FallbackValue='Escolha um repositório'}">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+            <Viewbox Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconFolder}" /></Canvas></Viewbox>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+              <TextBlock Classes="caption" Text="Repositório" />
+              <TextBlock Classes="strong" Text="{Binding RepositoryName}" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+            <Viewbox Grid.Column="2" Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconChevronDown}" /></Canvas></Viewbox>
+          </Grid>
+          <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedLeft">
+              <StackPanel Width="320">
+                <Border Classes="pane-header">
+                  <TextBlock Classes="heading" Text="Repositórios" VerticalAlignment="Center" />
+                </Border>
+                <ListBox Classes="list" MaxHeight="320" SelectionChanged="OnPickerSelectionChanged"
+                         ItemsSource="{Binding Repositories}" SelectedItem="{Binding SelectedRepository}">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="data:SavedRepository">
+                      <StackPanel>
+                        <TextBlock Classes="strong" Text="{Binding Name}" />
+                        <TextBlock Classes="caption" Text="{Binding Path}" TextTrimming="LeadingCharacterEllipsis" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <Border BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,1,0,0" Padding="16">
+                  <Grid ColumnDefinitions="*,*" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Button Content="Adicionar…" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding AddRepositoryCommand}" ToolTip.Tip="Adicionar uma pasta que já é repositório" />
+                    <Button Grid.Column="1" Content="Criar…" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding CreateRepositoryCommand}" ToolTip.Tip="Rodar git init em uma pasta" />
+                    <Button Grid.Row="1" Grid.ColumnSpan="2" Classes="ghost danger" HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Content="Remover da lista" Command="{Binding RemoveRepositoryCommand}"
+                            IsEnabled="{Binding HasRepository}" ToolTip.Tip="Os arquivos continuam no disco" />
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+
+        <!-- Branch atual -->
+        <Button DockPanel.Dock="Left" Classes="cell" Width="248" x:Name="BranchCell" IsEnabled="{Binding HasRepository}">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+            <Viewbox Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconBranch}" /></Canvas></Viewbox>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+              <TextBlock Classes="caption" Text="Branch atual" />
+              <TextBlock Classes="strong" Text="{Binding BranchName}" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+            <Viewbox Grid.Column="2" Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconChevronDown}" /></Canvas></Viewbox>
+          </Grid>
+          <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedLeft">
+              <StackPanel Width="320" IsEnabled="{Binding IsIdle}">
+                <Border Classes="pane-header">
+                  <TextBlock Classes="heading" Text="Branches" VerticalAlignment="Center" />
+                </Border>
+                <ListBox Classes="list" MaxHeight="320" SelectionChanged="OnPickerSelectionChanged"
+                         ItemsSource="{Binding Branches}" SelectedItem="{Binding SelectedBranch}">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:Branch">
+                      <DockPanel>
+                        <Border DockPanel.Dock="Right" Classes="chip" IsVisible="{Binding IsRemote}">
+                          <TextBlock Classes="caption" Text="remota" />
+                        </Border>
+                        <TextBlock Classes="code" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                      </DockPanel>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <Border BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,1,0,0" Padding="16">
+                  <StackPanel Spacing="8">
+                    <TextBlock Classes="caption" Text="Novo branch a partir do atual" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                      <TextBox Watermark="nome-do-branch" FontFamily="{StaticResource MonoFont}" FontSize="12"
+                               Text="{Binding NewBranchName}" />
+                      <Button Grid.Column="1" Content="Criar branch" Command="{Binding CreateBranchCommand}" />
+                    </Grid>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+
+        <!-- Ações remotas, à direita -->
+        <Border DockPanel.Dock="Right" BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="1,0,0,0"
+                IsEnabled="{Binding HasRepository}">
+          <StackPanel Orientation="Horizontal" IsEnabled="{Binding HasRemote}">
+            <Button Classes="cell" Width="200" Command="{Binding PullCommand}" IsEnabled="{Binding IsIdle}"
+                    ToolTip.Tip="git pull: traz os commits do remoto para este branch">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Viewbox Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconArrowDown}" /></Canvas></Viewbox>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                  <TextBlock Classes="strong" Text="Pull" />
+                  <TextBlock Classes="caption" Text="{Binding PullDetail}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Grid>
+            </Button>
+            <Button Classes="cell" Width="200" Command="{Binding PushCommand}" IsEnabled="{Binding IsIdle}"
+                    ToolTip.Tip="git push: envia os seus commits para o remoto">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Viewbox Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconArrowUp}" /></Canvas></Viewbox>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                  <TextBlock Classes="strong" Text="{Binding PushLabel}" />
+                  <TextBlock Classes="caption" Text="{Binding PushDetail}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Grid>
+            </Button>
+            <Button Classes="cell" Width="56" BorderThickness="0" HorizontalContentAlignment="Center" Padding="0"
+                    Command="{Binding FetchCommand}" IsEnabled="{Binding IsIdle}"
+                    ToolTip.Tip="Fetch: busca as novidades do remoto sem mudar seus arquivos">
+              <Viewbox Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconRefresh}" Stroke="{DynamicResource Text}" /></Canvas></Viewbox>
+            </Button>
+          </StackPanel>
+        </Border>
+
+        <Panel />
+      </DockPanel>
+    </Border>
+
+    <!-- Progresso: uma linha de 2px sob a barra, só enquanto o git trabalha -->
+    <Panel DockPanel.Dock="Top" Height="2">
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" CornerRadius="0" />
+    </Panel>
+
+    <!-- ============================================================ erro -->
+    <Border DockPanel.Dock="Top" Background="{DynamicResource DiffRemovedBg}" Padding="16,8"
+            BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,0,0,1" IsVisible="{Binding HasError}">
+      <DockPanel>
+        <Button DockPanel.Dock="Right" Classes="ghost" Command="{Binding DismissErrorCommand}" ToolTip.Tip="Fechar aviso">
+          <Viewbox Classes="icon"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconX}" Stroke="{DynamicResource Text}" /></Canvas></Viewbox>
+        </Button>
+        <Viewbox DockPanel.Dock="Left" Classes="icon" Margin="0,0,12,0"><Canvas Width="24" Height="24"><Path Classes="glyph" Data="{StaticResource IconAlert}"
+              Stroke="{DynamicResource DiffRemovedText}" /></Canvas></Viewbox>
+        <SelectableTextBlock Text="{Binding ErrorText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+      </DockPanel>
+    </Border>
+
+    <!-- ============================================================ barra de status -->
+    <Border DockPanel.Dock="Bottom" Height="28" Padding="16,0" Background="{DynamicResource SurfaceSunken}"
+            BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,1,0,0">
+      <TextBlock Classes="caption" Text="{Binding StatusText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+    </Border>
+
+    <Panel>
+      <!-- ============================================================ boas-vindas (sem repositório) -->
+      <Border IsVisible="{Binding HasNoRepository}" Background="{DynamicResource Surface}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="440" Margin="32">
+          <!-- Versão empilhada do logo (wye-stacked.svg) -->
+          <Viewbox Height="104" HorizontalAlignment="Center" Margin="0,0,0,32">
+            <Canvas Width="306" Height="362">
+              <Path Canvas.Left="25" Canvas.Top="-16" Data="{StaticResource WyeMainGeometry}" Fill="{DynamicResource LogoMain}" />
+              <Path Canvas.Left="25" Canvas.Top="-16" Data="{StaticResource WyeBranchGeometry}" Fill="{DynamicResource LogoBranch}" />
+              <Path Canvas.Left="7.84" Canvas.Top="332" Data="{StaticResource WyeWordmarkGeometry}" Fill="{DynamicResource LogoMain}"
+                    RenderTransformOrigin="0,0" RenderTransform="scale(0.8)" />
+            </Canvas>
+          </Viewbox>
+          <TextBlock Classes="title" Text="Nenhum repositório aberto" HorizontalAlignment="Center" />
+          <TextBlock Classes="muted" Margin="0,8,0,24" TextAlignment="Center" TextWrapping="Wrap"
+                     Text="Adicione uma pasta que já usa git ou crie um repositório novo. O&#160;wye roda o git do seu sistema e não envia nada para fora." />
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+            <Button Classes="primary" Content="Adicionar repositório…" Command="{Binding AddRepositoryCommand}" />
+            <Button Content="Criar repositório…" Command="{Binding CreateRepositoryCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- ============================================================ área de trabalho -->
+      <Grid ColumnDefinitions="340,1,*" IsVisible="{Binding HasRepository}">
+        <!-- Barra lateral: Mudanças / Histórico -->
+        <TabControl Grid.Column="0" SelectedIndex="{Binding SelectedTabIndex}" Background="{DynamicResource SurfaceSunken}">
+          <TabControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Columns="2" />
+            </ItemsPanelTemplate>
+          </TabControl.ItemsPanel>
+
+          <TabItem>
+            <TabItem.Header>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Mudanças" VerticalAlignment="Center" />
+                <Border Classes="count" IsVisible="{Binding !IsClean}">
+                  <TextBlock Classes="caption" Text="{Binding Files.Count}" HorizontalAlignment="Center" />
+                </Border>
+              </StackPanel>
+            </TabItem.Header>
+            <DockPanel>
+              <!-- Caixa de commit -->
+              <Border DockPanel.Dock="Bottom" Padding="16" BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,1,0,0">
+                <StackPanel Spacing="8">
+                  <TextBox Watermark="Resumo (obrigatório)" Text="{Binding CommitSummary}" MaxLength="200" />
+                  <TextBox Watermark="Descrição" Text="{Binding CommitDescription}" AcceptsReturn="True"
+                           TextWrapping="Wrap" Height="88" VerticalContentAlignment="Top" />
+                  <Button Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" MinHeight="36"
+                          Content="{Binding CommitButtonText}" Command="{Binding CommitCommand}" />
+                </StackPanel>
+              </Border>
+
+              <Border DockPanel.Dock="Top" Classes="pane-header" BorderThickness="0,1,0,1">
+                <DockPanel>
+                  <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="2" IsVisible="{Binding !IsClean}">
+                    <Button Classes="ghost" MinHeight="28" FontWeight="Normal" Content="Preparar tudo" Command="{Binding StageAllCommand}" />
+                    <Button Classes="ghost" MinHeight="28" FontWeight="Normal" Content="Tirar tudo" Command="{Binding UnstageAllCommand}" />
+                  </StackPanel>
+                  <TextBlock Classes="caption" VerticalAlignment="Center" Text="{Binding FilesSummary}" />
+                </DockPanel>
+              </Border>
+
+              <ListBox Classes="list" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:FileItemViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" ToolTip.Tip="{Binding Tooltip}">
+                      <CheckBox IsChecked="{Binding StageState, Mode=OneWay}" MinWidth="0" MinHeight="0" Padding="0"
+                                Command="{Binding #Root.((vm:MainWindowViewModel)DataContext).ToggleFileStageCommand}"
+                                CommandParameter="{Binding}"
+                                ToolTip.Tip="Incluir no commit (stage)" />
+                      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" ClipToBounds="True">
+                        <TextBlock Text="{Binding FileName}" />
+                        <TextBlock Classes="muted" Text="{Binding Folder}" IsVisible="{Binding HasFolder}"
+                                   TextTrimming="LeadingCharacterEllipsis" />
+                      </StackPanel>
+                      <TextBlock Grid.Column="2" Classes="status"
+                                 Classes.added="{Binding IsAdded}" Classes.modified="{Binding IsModified}"
+                                 Classes.renamed="{Binding IsRenamed}" Classes.deleted="{Binding IsDeleted}"
+                                 Classes.conflict="{Binding IsConflict}"
+                                 Text="{Binding Code}" ToolTip.Tip="{Binding Kind}" />
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </DockPanel>
+          </TabItem>
+
+          <TabItem Header="Histórico">
+            <Border BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,1,0,0">
+              <ListBox Classes="list" ItemsSource="{Binding Commits}" SelectedItem="{Binding SelectedCommit}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:CommitItemViewModel">
+                    <StackPanel Spacing="2">
+                      <TextBlock Classes="strong" Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                      <DockPanel>
+                        <Border DockPanel.Dock="Right" Classes="chip" IsVisible="{Binding HasRefs}" Margin="8,0,0,0">
+                          <TextBlock Classes="code" FontSize="11" LineHeight="16" Text="{Binding Refs}"
+                                     Foreground="{DynamicResource Accent}" TextTrimming="CharacterEllipsis" MaxWidth="140" />
+                        </Border>
+                        <TextBlock Classes="caption" Text="{Binding Meta}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                      </DockPanel>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Border>
+          </TabItem>
+        </TabControl>
+
+        <Border Grid.Column="1" Background="{DynamicResource BorderSubtle}" />
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="Transparent" Margin="-3,0" />
+
+        <!-- Coluna direita: detalhes do commit (histórico) + diff -->
+        <DockPanel Grid.Column="2">
+          <!-- Detalhes do commit selecionado -->
+          <Border DockPanel.Dock="Top" IsVisible="{Binding !IsChangesTab}" Padding="24,20,24,16"
+                  BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,0,0,1">
+            <StackPanel Spacing="8" IsVisible="{Binding SelectedCommit, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <SelectableTextBlock Classes="heading" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap"
+                                   Text="{Binding SelectedCommit.Summary, FallbackValue=''}" />
+              <SelectableTextBlock TextWrapping="Wrap" MaxLines="8" Foreground="{DynamicResource Text}"
+                                   Text="{Binding SelectedCommit.Body, FallbackValue=''}"
+                                   IsVisible="{Binding SelectedCommit.HasBody, FallbackValue=False}" />
+              <WrapPanel ItemSpacing="16">
+                <SelectableTextBlock Classes="code" Foreground="{DynamicResource TextMuted}"
+                                     Text="{Binding SelectedCommit.ShortSha, FallbackValue=''}"
+                                     ToolTip.Tip="{Binding SelectedCommit.Model.Sha, FallbackValue=''}" />
+                <TextBlock Classes="muted" Text="{Binding SelectedCommit.Author, FallbackValue=''}" />
+                <TextBlock Classes="muted" Text="{Binding SelectedCommit.Date, FallbackValue=''}" />
+              </WrapPanel>
+            </StackPanel>
+          </Border>
+
+          <Border DockPanel.Dock="Top" IsVisible="{Binding !IsChangesTab}" MaxHeight="176"
+                  BorderBrush="{DynamicResource BorderSubtle}" BorderThickness="0,0,0,1">
+            <ListBox Classes="list" ItemsSource="{Binding CommitFiles}" SelectedItem="{Binding SelectedCommitFile}">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:CommitFileItemViewModel">
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="12,0,0,0">
+                    <TextBlock Classes="status"
+                               Classes.added="{Binding IsAdded}" Classes.modified="{Binding IsModified}"
+                               Classes.renamed="{Binding IsRenamed}" Classes.deleted="{Binding IsDeleted}"
+                               Classes.conflict="{Binding IsConflict}"
+                               Text="{Binding Code}" ToolTip.Tip="{Binding Kind}" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="{Binding FileName}" />
+                      <TextBlock Classes="muted" Text="{Binding Folder}" IsVisible="{Binding HasFolder}" />
+                    </StackPanel>
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Border>
+
+          <!-- Cabeçalho do diff -->
+          <Border DockPanel.Dock="Top" Classes="pane-header" Height="48">
+            <DockPanel>
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="12" IsVisible="{Binding IsChangesTab}">
+                <Button Content="Preparar linhas selecionadas" Command="{Binding StageSelectedLinesCommand}"
+                        IsVisible="{Binding CanStageLines}" />
+                <Button Content="Tirar linhas do stage" Command="{Binding UnstageSelectedLinesCommand}"
+                        IsVisible="{Binding CanUnstageLines}" />
+                <Border Background="{DynamicResource SurfaceHover}" CornerRadius="6" Padding="2" VerticalAlignment="Center">
+                  <StackPanel Orientation="Horizontal" Spacing="2">
+                    <ToggleButton Classes="segment" IsChecked="{Binding !ShowStaged}" Content="Não preparadas" />
+                    <ToggleButton Classes="segment" IsChecked="{Binding ShowStaged}" Content="Preparadas" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+              <TextBlock Classes="code" FontSize="13" Text="{Binding DiffTitle}" VerticalAlignment="Center"
+                         TextTrimming="LeadingCharacterEllipsis" Margin="0,0,16,0" />
+            </DockPanel>
+          </Border>
+
+          <Panel>
+            <!-- Nada para mostrar no diff -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8" Margin="32" MaxWidth="420"
+                        IsVisible="{Binding IsClean}">
+              <TextBlock Classes="title" Text="Nenhuma mudança local" HorizontalAlignment="Center" />
+              <TextBlock Classes="muted" TextAlignment="Center" TextWrapping="Wrap"
+                         Text="O diretório de trabalho está igual ao último commit. Quando você editar um arquivo, ele aparece aqui." />
+            </StackPanel>
+
+            <TextBlock Margin="24,16" Classes="muted" Text="{Binding DiffMessage}" TextWrapping="Wrap"
+                       IsVisible="{Binding DiffMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+            <!-- Diff: clique nas linhas + e − para selecioná-las e prepare só elas (stage parcial) -->
+            <ListBox Classes="diff" ItemsSource="{Binding DiffLines}" SelectionMode="Multiple,Toggle"
+                     Background="{DynamicResource Surface}"
+                     IsVisible="{Binding DiffMessage, Converter={x:Static ObjectConverters.IsNull}}">
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem" x:DataType="vm:DiffLineViewModel">
+                  <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                </Style>
+              </ListBox.Styles>
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:DiffLineViewModel">
+                  <Border Classes="line" Classes.add="{Binding IsAdd}" Classes.delete="{Binding IsDelete}"
+                          Classes.hunk="{Binding IsHunk}" Classes.change="{Binding IsChange}">
+                    <Grid ColumnDefinitions="48,48,24,*">
+                      <TextBlock Grid.Column="0" Classes="code muted gutter" Text="{Binding OldNumber}" TextAlignment="Right" />
+                      <TextBlock Grid.Column="1" Classes="code muted gutter" Text="{Binding NewNumber}" TextAlignment="Right" />
+                      <TextBlock Grid.Column="2" Classes="code gutter" Text="{Binding Prefix}" TextAlignment="Center" FontWeight="Bold" />
+                      <TextBlock Grid.Column="3" Classes="code" Text="{Binding Text}" Margin="4,0,16,0" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Panel>
+        </DockPanel>
+      </Grid>
+    </Panel>
+  </DockPanel>
+</Window>

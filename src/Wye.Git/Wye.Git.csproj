@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Wye.Core\Wye.Core.csproj" />
+  </ItemGroup>
+</Project>

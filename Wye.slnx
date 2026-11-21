@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Wye.App/Wye.App.csproj" />
+    <Project Path="src/Wye.Core/Wye.Core.csproj" />
+    <Project Path="src/Wye.Data/Wye.Data.csproj" />
+    <Project Path="src/Wye.Git/Wye.Git.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Wye.App.Tests/Wye.App.Tests.csproj" />
+    <Project Path="tests/Wye.Core.Tests/Wye.Core.Tests.csproj" />
+    <Project Path="tests/Wye.Git.Tests/Wye.Git.Tests.csproj" />
+  </Folder>
+</Solution>

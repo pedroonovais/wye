@@ -1,0 +1,438 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Wye.App.App"
+             Name="wye"
+             RequestedThemeVariant="Default">
+  <!--
+    Tema do wye. Os valores vêm de docs/brand/wye/design-system/project/tokens.json.
+    Use sempre os tokens semânticos (Surface, Text, Accent…), nunca a escala ink/signal direto.
+  -->
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <Color x:Key="LogoMainColor">#15171E</Color>
+          <Color x:Key="LogoBranchColor">#12A150</Color>
+          <SolidColorBrush x:Key="LogoMain" Color="#15171E" />
+          <SolidColorBrush x:Key="LogoBranch" Color="#12A150" />
+          <SolidColorBrush x:Key="Surface" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="SurfaceSunken" Color="#F6F7F9" />
+          <SolidColorBrush x:Key="SurfaceRaised" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="SurfaceHover" Color="#ECEEF2" />
+          <SolidColorBrush x:Key="SurfacePressed" Color="#DADDE4" />
+          <SolidColorBrush x:Key="SurfaceSelected" Color="#E8F7EE" />
+          <SolidColorBrush x:Key="BorderSubtle" Color="#DADDE4" />
+          <SolidColorBrush x:Key="BorderControl" Color="#6B7180" />
+          <SolidColorBrush x:Key="Text" Color="#15171E" />
+          <SolidColorBrush x:Key="TextMuted" Color="#6B7180" />
+          <SolidColorBrush x:Key="Accent" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="AccentHover" Color="#0B6333" />
+          <SolidColorBrush x:Key="AccentPressed" Color="#0A4A28" />
+          <SolidColorBrush x:Key="OnAccent" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="FocusRing" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="DiffAddedBg" Color="#E8F7EE" />
+          <SolidColorBrush x:Key="DiffAddedSelectedBg" Color="#C9F0DA" />
+          <SolidColorBrush x:Key="DiffAddedText" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="DiffRemovedBg" Color="#FDECEE" />
+          <SolidColorBrush x:Key="DiffRemovedSelectedBg" Color="#F9D3D9" />
+          <SolidColorBrush x:Key="DiffRemovedText" Color="#B4233A" />
+          <SolidColorBrush x:Key="StatusModified" Color="#9A5B00" />
+          <SolidColorBrush x:Key="StatusRenamed" Color="#2459C9" />
+          <SolidColorBrush x:Key="StatusConflict" Color="#C2410C" />
+
+          <!-- Chaves do FluentTheme apontadas para os tokens -->
+          <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="Transparent" />
+          <SolidColorBrush x:Key="TextControlBorderBrush" Color="#6B7180" />
+          <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#4D5361" />
+          <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="TextControlBackground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#6B7180" />
+          <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#6B7180" />
+          <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#6B7180" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="#0B6333" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminate" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" Color="#0B6333" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" Color="#0D7F3F" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundIndeterminate" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOver" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="#6B7180" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillUnchecked" Color="#FFFFFF" />
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Dark">
+          <Color x:Key="LogoMainColor">#FFFFFF</Color>
+          <Color x:Key="LogoBranchColor">#3BD68A</Color>
+          <SolidColorBrush x:Key="LogoMain" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="LogoBranch" Color="#3BD68A" />
+          <SolidColorBrush x:Key="Surface" Color="#15171E" />
+          <SolidColorBrush x:Key="SurfaceSunken" Color="#0D0E13" />
+          <SolidColorBrush x:Key="SurfaceRaised" Color="#1C1F27" />
+          <SolidColorBrush x:Key="SurfaceHover" Color="#22252E" />
+          <SolidColorBrush x:Key="SurfacePressed" Color="#353A46" />
+          <SolidColorBrush x:Key="SurfaceSelected" Color="#10261A" />
+          <SolidColorBrush x:Key="BorderSubtle" Color="#353A46" />
+          <SolidColorBrush x:Key="BorderControl" Color="#6B7180" />
+          <SolidColorBrush x:Key="Text" Color="#ECEEF2" />
+          <SolidColorBrush x:Key="TextMuted" Color="#9198A6" />
+          <SolidColorBrush x:Key="Accent" Color="#3BD68A" />
+          <SolidColorBrush x:Key="AccentHover" Color="#6EE0A6" />
+          <SolidColorBrush x:Key="AccentPressed" Color="#9DE5BE" />
+          <SolidColorBrush x:Key="OnAccent" Color="#15171E" />
+          <SolidColorBrush x:Key="FocusRing" Color="#3BD68A" />
+          <SolidColorBrush x:Key="DiffAddedBg" Color="#10261A" />
+          <SolidColorBrush x:Key="DiffAddedSelectedBg" Color="#164A2E" />
+          <SolidColorBrush x:Key="DiffAddedText" Color="#3BD68A" />
+          <SolidColorBrush x:Key="DiffRemovedBg" Color="#331419" />
+          <SolidColorBrush x:Key="DiffRemovedSelectedBg" Color="#5A1F29" />
+          <SolidColorBrush x:Key="DiffRemovedText" Color="#FF7A8A" />
+          <SolidColorBrush x:Key="StatusModified" Color="#F0B44C" />
+          <SolidColorBrush x:Key="StatusRenamed" Color="#7AA7FF" />
+          <SolidColorBrush x:Key="StatusConflict" Color="#FF8A4C" />
+
+          <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="#3BD68A" />
+          <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="Transparent" />
+          <SolidColorBrush x:Key="TextControlBorderBrush" Color="#6B7180" />
+          <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#9198A6" />
+          <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#3BD68A" />
+          <SolidColorBrush x:Key="TextControlBackground" Color="#15171E" />
+          <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#15171E" />
+          <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#15171E" />
+          <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#9198A6" />
+          <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#9198A6" />
+          <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#9198A6" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="#3BD68A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="#6EE0A6" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminate" Color="#3BD68A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" Color="#6EE0A6" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#3BD68A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" Color="#3BD68A" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="#15171E" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="#15171E" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundIndeterminate" Color="#15171E" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOver" Color="#15171E" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="#6B7180" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillUnchecked" Color="#15171E" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+
+      <!-- Tipografia: Inter na interface, Manrope só em marca e estados vazios, mono no diff -->
+      <FontFamily x:Key="DisplayFont">avares://wye/Assets/Fonts#Manrope</FontFamily>
+      <FontFamily x:Key="MonoFont">JetBrains Mono, Cascadia Code, Cascadia Mono, DejaVu Sans Mono, Menlo, Consolas, monospace</FontFamily>
+      <x:Double x:Key="ControlContentThemeFontSize">13</x:Double>
+      <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
+      <CornerRadius x:Key="OverlayCornerRadius">10</CornerRadius>
+
+      <!-- Geometria do logo (docs/brand/wye/final). Não redesenhe: copie do arquivo-mestre. -->
+      <StreamGeometry x:Key="WyeMainGeometry">M106 228 L150 228 L150 130.11 L93.36 32 L42.55 32 L106 141.89 Z</StreamGeometry>
+      <StreamGeometry x:Key="WyeBranchGeometry">M133.77 82 L159.18 126 L213.45 32 L162.64 32 Z</StreamGeometry>
+      <StreamGeometry x:Key="WyeSmallMainGeometry">M104 228 L152 228 L152 129.57 L95.67 32 L40.24 32 L104 142.43 Z</StreamGeometry>
+      <StreamGeometry x:Key="WyeSmallBranchGeometry">M137.24 72 L164.95 120 L215.76 32 L160.33 32 Z</StreamGeometry>
+      <StreamGeometry x:Key="WyeWordmarkGeometry">M34.259 0 3.704 -100.185 28.333 -100 46.481 -40.37 64.907 -100H85.833L104.259 -40.37L122.407 -100H147.037L116.481 0H97.222L75.37 -65.185L53.519 0ZM173.481 44.444 189.963 -0.833 149.593 -100H175.704L202 -31.944L228.111 -100H253.296L196.815 44.444ZM309.741 2.778Q294.37 2.778 282.657 -3.843Q270.944 -10.463 264.324 -22.083Q257.704 -33.704 257.704 -48.704Q257.704 -65.093 264.185 -77.222Q270.667 -89.352 282.056 -96.065Q293.444 -102.778 308.259 -102.778Q324 -102.778 335.019 -95.37Q346.037 -87.963 351.315 -74.537Q356.593 -61.111 355.019 -42.963H284.833Q286.037 -33.981 290.481 -28.426Q296.5 -20.741 308.259 -20.741Q315.667 -20.741 320.944 -23.981Q326.222 -27.222 329 -33.333L354.185 -26.111Q348.537 -12.407 336.361 -4.815Q324.185 2.778 309.741 2.778ZM329.556 -61.667Q328.444 -69.815 325.296 -74.259Q320.389 -80.926 309.37 -80.926Q296.5 -80.926 290.481 -73.148Q286.963 -68.611 285.481 -61.667Z</StreamGeometry>
+
+      <!-- Ícones Lucide (ISC), traço de 1,5px desenhado em 24 unidades -->
+      <StreamGeometry x:Key="IconChevronDown">M6 9 L12 15 L18 9</StreamGeometry>
+      <StreamGeometry x:Key="IconRefresh">M3 12 A9 9 0 0 1 12 3 A9.75 9.75 0 0 1 18.74 5.74 L21 8 M21 3 V8 H16 M21 12 A9 9 0 0 1 12 21 A9.75 9.75 0 0 1 5.26 18.26 L3 16 M8 16 H3 V21</StreamGeometry>
+      <StreamGeometry x:Key="IconArrowDown">M12 5 V19 M19 12 L12 19 L5 12</StreamGeometry>
+      <StreamGeometry x:Key="IconArrowUp">M12 19 V5 M5 12 L12 5 L19 12</StreamGeometry>
+      <StreamGeometry x:Key="IconUpload">M12 3 V15 M17 8 L12 3 L7 8 M21 15 V19 A2 2 0 0 1 19 21 H5 A2 2 0 0 1 3 19 V15</StreamGeometry>
+      <StreamGeometry x:Key="IconFolder">M20 20 A2 2 0 0 0 22 18 V8 A2 2 0 0 0 20 6 H12.1 A2 2 0 0 1 10.41 5.1 L9.6 3.9 A2 2 0 0 0 7.93 3 H4 A2 2 0 0 0 2 5 V18 A2 2 0 0 0 4 20 Z</StreamGeometry>
+      <StreamGeometry x:Key="IconBranch">M6 3 V15 M18 9 A3 3 0 1 0 18 3 A3 3 0 0 0 18 9 Z M6 21 A3 3 0 1 0 6 15 A3 3 0 0 0 6 21 Z M18 9 A9 9 0 0 1 9 18</StreamGeometry>
+      <StreamGeometry x:Key="IconPlus">M5 12 H19 M12 5 V19</StreamGeometry>
+      <StreamGeometry x:Key="IconX">M18 6 L6 18 M6 6 L18 18</StreamGeometry>
+      <StreamGeometry x:Key="IconAlert">M12 22 A10 10 0 1 0 12 2 A10 10 0 0 0 12 22 Z M12 8 V12 M12 16 H12.01</StreamGeometry>
+      <StreamGeometry x:Key="IconCheck">M20 6 L9 17 L4 12</StreamGeometry>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <!-- ===================================================================== base -->
+    <Style Selector="Window">
+      <Setter Property="Background" Value="{DynamicResource Surface}" />
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <Style Selector="TextBlock">
+      <Setter Property="LineHeight" Value="20" />
+    </Style>
+
+    <!-- Estilos de texto do manual -->
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+      <Setter Property="FontWeight" Value="ExtraBold" />
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="LineHeight" Value="28" />
+      <Setter Property="LetterSpacing" Value="-0.22" />
+    </Style>
+    <Style Selector="TextBlock.heading">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.strong">
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.caption">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+    </Style>
+    <Style Selector="TextBlock.code, SelectableTextBlock.code">
+      <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="20" />
+    </Style>
+
+    <!-- Ícones: desenhados em 24 unidades (Lucide) e mostrados em 16px; traço de 1,5px na tela -->
+    <Style Selector="Viewbox.icon">
+      <Setter Property="Width" Value="16" />
+      <Setter Property="Height" Value="16" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Path.glyph">
+      <Setter Property="StrokeThickness" Value="2.25" />
+      <Setter Property="StrokeLineCap" Value="Round" />
+      <Setter Property="StrokeJoin" Value="Round" />
+      <Setter Property="Stroke" Value="{DynamicResource TextMuted}" />
+    </Style>
+
+    <!-- Letra de status do arquivo -->
+    <Style Selector="TextBlock.status">
+      <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Width" Value="16" />
+      <Setter Property="TextAlignment" Value="Center" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+    </Style>
+    <Style Selector="TextBlock.status.added">
+      <Setter Property="Foreground" Value="{DynamicResource DiffAddedText}" />
+    </Style>
+    <Style Selector="TextBlock.status.modified">
+      <Setter Property="Foreground" Value="{DynamicResource StatusModified}" />
+    </Style>
+    <Style Selector="TextBlock.status.renamed">
+      <Setter Property="Foreground" Value="{DynamicResource StatusRenamed}" />
+    </Style>
+    <Style Selector="TextBlock.status.deleted">
+      <Setter Property="Foreground" Value="{DynamicResource DiffRemovedText}" />
+    </Style>
+    <Style Selector="TextBlock.status.conflict">
+      <Setter Property="Foreground" Value="{DynamicResource StatusConflict}" />
+    </Style>
+
+    <!-- ===================================================================== botões -->
+    <Style Selector="Button, ToggleButton">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="12,0" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Background" Value="{DynamicResource Surface}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter,
+                     ToggleButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SurfaceHover}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+    <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter,
+                     ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SurfacePressed}" />
+    </Style>
+    <Style Selector="Button:disabled, ToggleButton:disabled">
+      <Setter Property="Opacity" Value="0.4" />
+    </Style>
+    <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter,
+                     ToggleButton:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{Binding $parent[TemplatedControl].Background}" />
+      <Setter Property="BorderBrush" Value="{Binding $parent[TemplatedControl].BorderBrush}" />
+      <Setter Property="Foreground" Value="{Binding $parent[TemplatedControl].Foreground}" />
+    </Style>
+
+    <!-- Primário: um por tela (Commit, Adicionar repositório) -->
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="{DynamicResource Accent}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccent}" />
+    </Style>
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentHover}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentHover}" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccent}" />
+    </Style>
+    <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentPressed}" />
+    </Style>
+
+    <!-- Ação destrutiva -->
+    <Style Selector="Button.danger">
+      <Setter Property="Foreground" Value="{DynamicResource DiffRemovedText}" />
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource DiffRemovedText}" />
+    </Style>
+
+    <!-- Botão sem moldura (fechar, ícones) -->
+    <Style Selector="Button.ghost">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="8,0" />
+    </Style>
+    <Style Selector="Button.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <!-- Célula da barra de ferramentas: rótulo em cima, valor embaixo, encostada nas vizinhas -->
+    <Style Selector="Button.cell">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0,0,1,0" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="CornerRadius" Value="0" />
+      <Setter Property="Padding" Value="16,0" />
+      <Setter Property="VerticalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style Selector="Button.cell:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+    </Style>
+
+    <!-- Controle segmentado: Não preparadas | Preparadas -->
+    <Style Selector="ToggleButton.segment">
+      <Setter Property="MinHeight" Value="28" />
+      <Setter Property="Padding" Value="10,0" />
+      <Setter Property="FontWeight" Value="Normal" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+    </Style>
+    <Style Selector="ToggleButton.segment:checked /template/ ContentPresenter#PART_ContentPresenter,
+                     ToggleButton.segment:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource Surface}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+    <Style Selector="ToggleButton.segment:checked">
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="ToggleButton.segment:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <!-- ===================================================================== campos -->
+    <Style Selector="TextBox">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="12,6" />
+      <Setter Property="CornerRadius" Value="6" />
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+
+    <!-- ===================================================================== listas -->
+    <Style Selector="ListBox">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="ListBox.list ListBoxItem">
+      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="BorderThickness" Value="2,0,0,0" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBox.list ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SurfaceHover}" />
+    </Style>
+    <Style Selector="ListBox.list ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter,
+                     ListBox.list ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter,
+                     ListBox.list ListBoxItem:selected:focus /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SurfaceSelected}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+    </Style>
+    <Style Selector="ListBox.list ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+
+    <!-- Diff: o item não pinta nada; a linha (Border.line) decide fundo e marca de seleção -->
+    <Style Selector="ListBox.diff ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+    <Style Selector="ListBox.diff ListBoxItem /template/ ContentPresenter#PART_ContentPresenter,
+                     ListBox.diff ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter,
+                     ListBox.diff ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter,
+                     ListBox.diff ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter,
+                     ListBox.diff ListBoxItem:selected:focus /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+
+    <!-- ===================================================================== abas -->
+    <Style Selector="TabControl">
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="MinHeight" Value="44" />
+      <Setter Property="Padding" Value="16,0" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+    </Style>
+    <Style Selector="TabItem:selected, TabItem:selected:pointerover">
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+    <Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource SurfaceHover}" />
+    </Style>
+    <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource Text}" />
+    </Style>
+    <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
+      <Setter Property="Background" Value="{DynamicResource Accent}" />
+      <Setter Property="Height" Value="2" />
+      <Setter Property="CornerRadius" Value="0" />
+      <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <!-- ===================================================================== menus e popovers -->
+    <Style Selector="FlyoutPresenter">
+      <Setter Property="Background" Value="{DynamicResource SurfaceRaised}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MaxWidth" Value="420" />
+    </Style>
+
+    <Style Selector="GridSplitter">
+      <Setter Property="Background" Value="{DynamicResource BorderSubtle}" />
+      <Setter Property="MinWidth" Value="1" />
+    </Style>
+
+    <Style Selector="ProgressBar">
+      <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="MinHeight" Value="2" />
+      <Setter Property="Height" Value="2" />
+    </Style>
+
+    <!-- Movimento: curto e só em mudança de estado; o FluentTheme já respeita "reduzir movimento" do sistema -->
+  </Application.Styles>
+</Application>
