@@ -1,4 +1,4 @@
-<img src="docs/brand/wye/final/wye-horizontal.svg" alt="wye" height="48">
+<img src="" alt="wye" height="48">
 
 Cliente git de desktop em **.NET 10 + Avalonia**, inspirado no GitHub Desktop.
 Roda em Linux, Windows e macOS.
